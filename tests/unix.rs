@@ -13,7 +13,7 @@ async fn starts_unix_server() {
         Err(_) => (),
     };
 
-    let address = SocketAddr::from_str("unix:./target/tmp.sock").unwrap();
+    let address = SocketAddr::from_str("unix:./target/tmp.sock").await.unwrap();
     let listener = Listener::bind(&address).await.unwrap();
 
     task::spawn(async move {
@@ -21,9 +21,7 @@ async fn starts_unix_server() {
     });
 
     let mut result = false;
-    while let Some(stream) = listener.incoming().next().await {
-        let mut stream = stream.unwrap();
-        stream.write(b"foo").await.unwrap();
+    while let Some(_) = listener.incoming().next().await {
         result = true;
         break;
     }

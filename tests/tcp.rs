@@ -4,7 +4,7 @@ use async_uninet::{Listener, SocketAddr, Stream};
 
 #[async_std::test]
 async fn starts_inet_server() {
-    let address = SocketAddr::from_str("127.0.0.1:4445").unwrap();
+    let address = SocketAddr::from_str("127.0.0.1:4445").await.unwrap();
     let listener = Listener::bind(&address).await.unwrap();
 
     task::spawn(async move {
@@ -12,9 +12,7 @@ async fn starts_inet_server() {
     });
 
     let mut result = false;
-    while let Some(stream) = listener.incoming().next().await {
-        let mut stream = stream.unwrap();
-        stream.write(b"foo").await.unwrap();
+    while let Some(_) = listener.incoming().next().await {
         result = true;
         break;
     }
