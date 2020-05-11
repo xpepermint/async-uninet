@@ -7,6 +7,10 @@ This package is built using [async-std](https://github.com/async-rs/async-std) a
 ## Example
 
 ```rs
+use async_std::prelude::*;
+use async_uninet::{Listener, SocketAddr};
+...
+
 let address = SocketAddr::from_str("unix:/tmp/sock").await.unwrap(); // use unix socket
 let address = SocketAddr::from_str("127.0.0.1:4445").await.unwrap(); // use tcp address
 let listener = Listener::bind(&address).await.unwrap();
