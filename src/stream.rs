@@ -15,14 +15,14 @@ pub enum Stream {
 }
 
 impl From<net::TcpStream> for Stream {
-    fn from(s: net::TcpStream) -> Stream {
+    fn from(s: net::TcpStream) -> Self {
         Stream::Inet(s)
     }
 }
 
 #[cfg(unix)]
 impl From<unix::UnixStream> for Stream {
-    fn from(s: unix::UnixStream) -> Stream {
+    fn from(s: unix::UnixStream) -> Self {
         Stream::Unix(s)
     }
 }
@@ -82,6 +82,17 @@ impl io::Read for &Stream {
     }
 }
 
+impl io::Read for Stream {
+
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &mut [u8],
+    ) -> Poll<io::Result<usize>> {
+        Pin::new(&mut &*self).poll_read(cx, buf)
+    }
+}
+
 impl io::Write for &Stream {
 
     fn poll_write(
@@ -131,17 +142,8 @@ impl io::Write for &Stream {
     }
 }
 
-impl io::Read for Stream {
-    fn poll_read(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-        buf: &mut [u8],
-    ) -> Poll<io::Result<usize>> {
-        Pin::new(&mut &*self).poll_read(cx, buf)
-    }
-}
-
 impl io::Write for Stream {
+
     fn poll_write(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,

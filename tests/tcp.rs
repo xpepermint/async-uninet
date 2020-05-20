@@ -20,7 +20,7 @@ async fn starts_inet_server() {
 }
 
 #[async_std::test]
-async fn performs_http_request() {
+async fn performs_inet_request() {
     let address = SocketAddr::from_str("google.com:80").await.unwrap();
     let mut stream = Stream::connect(&address).await.unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").await.unwrap();
